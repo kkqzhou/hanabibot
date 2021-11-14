@@ -10,6 +10,6 @@ With 4-5 players, each player starts with 4 cards in hand.
 
 Representations:
 * Card: int - 0..59
-* Suit: The tens digit of each card
+* Suit: The tens digit of each card mapped as follows - {0: rainbow, 1: red, 2: yellow, 3: green, 4: blue, 5: white}
 * Number: The units digit of each card mapped as follows - {0: 1, 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4, 8: 4, 9: 5}
 """
