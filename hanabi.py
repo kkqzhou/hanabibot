@@ -48,6 +48,7 @@ class HanabiGame:
             raise NotImplementedError
 
 if __name__ == '__main__':
+    np.random.seed(123456789)
     game = HanabiGame(num_players=4)
     print(game.player_cards)
     print(len(game.deck))
