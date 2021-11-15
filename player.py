@@ -3,7 +3,7 @@ from card import Card
 from abc import ABC, abstractmethod
 
 import enum
- dataclasses import dataclass
+from dataclasses import dataclass
 
 class HintType(enum.Enum):
     COLOR = 0
