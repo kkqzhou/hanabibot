@@ -63,7 +63,9 @@ class RetardedPlayer(Player):
                 if not hint_exists_on_card(player_leftmost_unhinted, hint):
                     return hint
         
-        for idx, _hints in enumerate(my_card_hints):
+        for i in range(len(my_card_hints)):
+            idx = len(my_card_hints) - i - 1
+            _hints = my_card_hints[idx]
             if sum([(hint.hint_value == 1) and (hint.hint_type == HintType.NUMBER) for hint in _hints]) > 0:
                 return Play(idx)
             if sum([(hint.hint_type == HintType.COLOR) for hint in _hints]) > 0:
