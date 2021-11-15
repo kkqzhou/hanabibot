@@ -2,6 +2,8 @@ import numpy as np
 
 import random
 from typing import Dict, Iterable, List, Tuple
+from card import Card
+from player import Player
 
 """
 Game rules for the card game Hanabi are encoded here. The standard setup of the game involves 60 Hanabi cards, 
@@ -20,24 +22,20 @@ Representations:
 """
 
 TOTAL_NUM_CARDS = 60
-
-class Card:
-    def __init__(self, color, number):
-        self.color = color
-        self.number = number
-
-    def __repr__(self):
-        return ("Card{%s, %s}" % (self.color, self.number))
+NUM_COLORS = 6
 
 class HanabiGame:
-    def __init__(self, num_players: int):
-        self.num_players = num_players
+    def __init__(self, players: List[Player]):
+        self.num_players = len(players)
         self.deck: List[Card] = self.shuffle_cards()
         self.player_cards, self.deck = self.deal_cards(self.deck)
+        self.players = players
+        self.strikes = 0
+        self.hints = 8
 
     def shuffle_cards(self) -> List[Card]:
         deck = []
-        for i in range(6):
+        for i in range(NUM_COLORS):
             for j in range(1,6):
                 count = 1
                 if j == 1:
@@ -59,6 +57,18 @@ class HanabiGame:
             return player_cards, deck
         else:
             raise NotImplementedError
+
+    def play_complete(self):
+        history = []
+        played = [Card(i, 0) for i in range(NUM_COLORS)]
+        for i, player in enumerate(self.players):
+            visible_hands = {
+                j: player_cards for j, player_cards in self.player_cards.items() if i != j
+            }
+            new_action = player.play(i, visible_hands, played, history)
+            history.append(new_action)
+            # TBD: Check strikes/hints/played
+        
 
 if __name__ == '__main__':
     np.random.seed(123456789)
