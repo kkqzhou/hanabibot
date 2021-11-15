@@ -2,8 +2,8 @@ import numpy as np
 
 import random
 from typing import Dict, Iterable, List, Tuple
-from card import Card
-from player import Player, Hint, Play, Discard
+from card import Card, Hint, HintType
+from player import Player, Play, Discard
 
 """
 Game rules for the card game Hanabi are encoded here. The standard setup of the game involves 60 Hanabi cards, 
@@ -26,17 +26,16 @@ NUM_COLORS = 6
 
 class HanabiGame:
     def __init__(self, players: List[Player]):
+        self.players = players
         self.num_players = len(players)
         self.deck: List[Card] = self.shuffle_cards()
         self.player_cards, self.deck = self.deal_cards(self.deck)
-        self.players = players
 
         self.history = []
         self.played = [Card(i, 0) for i in range(NUM_COLORS)]
         self.discarded = []
         self.strikes = 0
-        self.hints = 8
-
+        self.num_hints = 8
 
     def shuffle_cards(self) -> List[Card]:
         deck = []
@@ -49,10 +48,14 @@ class HanabiGame:
         if self.num_players in {2, 3}:
             player_cards = {i: deck[i*5:(i+1)*5] for i in range(self.num_players)}
             deck = deck[self.num_players*5:]
+            for i in range(self.num_players):
+                self.players[i].set_num_cards(5)
             return player_cards, deck
         elif self.num_players in {4, 5}:
             player_cards = {i: deck[i*4:(i+1)*4] for i in range(self.num_players)}
             deck = deck[self.num_players*4:]
+            for i in range(self.num_players):
+                self.players[i].set_num_cards(4)
             return player_cards, deck
         else:
             raise NotImplementedError
@@ -93,7 +96,7 @@ class HanabiGame:
                     self.played,
                     self.discarded,
                     self.history,
-                    self.hints,
+                    self.num_hints,
                     self.strikes
                 )
                 self.history.append(new_action)
@@ -109,15 +112,25 @@ class HanabiGame:
                         self.strikes += 1
                     remaining_cards = self.draw_new_card(i, idx)
                 elif isinstance(new_action, Hint):
-                    if self.hints >= 1:
-                        self.hints -= 1
+                    if self.num_hints >= 1:
+
+                        if new_action.hint_type == HintType.COLOR:
+                            for card in self.player_cards[new_action.player]:
+                                if card.color == new_action.hint_value:
+                                    card.add_hint(new_action)
+                        elif new_action.hint_type == HintType.NUMBER:
+                            for card in self.player_cards[new_action.player]:
+                                if card.number == new_action.hint_value:
+                                    card.add_hint(new_action)
+
+                        self.num_hints -= 1
                     else:
                         raise IndentationError("you don't have any valid hints, foo")
                 elif isinstance(new_action, Discard):
                     idx = new_action.idx
                     card = self.player_cards[i][idx]
                     new_action.card = card
-                    self.hints += 1
+                    self.num_hints += 1
                     remaining_cards = self.draw_new_card(i, idx)
                     
                 if not remaining_cards and not counting_down_out_of_cards:
@@ -134,14 +147,17 @@ class HanabiGame:
                         done = True
                         break
 
+                print(self.player_cards)
+
         return sum([card.number for card in self.played])
 
 if __name__ == '__main__':
     np.random.seed(123456789)
-    from dumb_player import DumbPlayer
-    game = HanabiGame(players=[DumbPlayer() for _ in range(4)])
+    from dumb_player import DumbPlayer, DumberPlayer
+    game = HanabiGame(players=[DumberPlayer() for _ in range(4)])
+
     print(game.player_cards)
     print(len(game.deck))
-    print(game.deck)
+
     print(game.play_complete())
     print(game.history)
