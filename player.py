@@ -22,6 +22,7 @@ class Hint:
     player: int
     indices: List[int]
     hint_type: HintType
+    hint_value: int # Matches hint_type, is color or number depending
 
 @dataclass
 class Discard:

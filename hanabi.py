@@ -111,7 +111,7 @@ class HanabiGame:
                     if self.play_card(card):
                         new_action.success = True
                     else:
-                        new_action.sucess = False
+                        new_action.success = False
                         self.strikes += 1
                     remaining_cards = self.draw_new_card(i, idx)
                 elif isinstance(new_action, Hint):
