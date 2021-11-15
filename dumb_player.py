@@ -40,6 +40,7 @@ class SmartDumbPlayer(Player):
         my_card_hints: List[List[Hint]],
     ) -> Action:
         next_number = min(p.number for p in played) + 1
+
         for i, my_hints in enumerate(my_card_hints):
             if [hint for hint in my_hints if hint.hint_value == next_number]:
                 return Play(i)

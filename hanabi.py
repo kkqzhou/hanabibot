@@ -25,7 +25,7 @@ TOTAL_NUM_CARDS = 60
 NUM_COLORS = 6
 
 class HanabiGame:
-    def __init__(self, players: List[Player], verbose: bool = True):
+    def __init__(self, players: List[Player], verbose: bool = False):
         self.verbose = verbose
         self.players = players
         self.num_players = len(players)
