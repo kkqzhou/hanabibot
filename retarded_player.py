@@ -1,5 +1,5 @@
 from player import Player, Action, Play, Discard
-from typing import Dict, List
+from typing import Dict, List, Optional
 from card import Card, Hint, HintType
 
 
@@ -21,14 +21,14 @@ def hint_exists_on_card(card: Card, impending_hint: Hint):
 
 
 def is_problem_card(card: Card, discarded: List[Card]):
-    if card.number == 5:
+    if card.number in {2}:
         return True
-    if card.number in {2,3,4} and (card.color, card.number) in {(card.color, card.number) for card in discarded}:
+    if card.number in {3,4} and (card.color, card.number) in {(card.color, card.number) for card in discarded}:
         return True
     return False
 
 
-def get_leftmost_unhinted(hand: List[Card]):
+def get_leftmost_unhinted(hand: List[Card]) -> Optional[Card]:
     unhinted = [card for card in hand if not len(card.hints)]
     return unhinted[0] if len(unhinted) else None
 
@@ -45,35 +45,36 @@ class RetardedPlayer(Player):
         my_card_hints: List[List[Hint]],
     ) -> Action:
         
+        my_leftmost_unhinted_idx = 0
+        for idx, _hints in enumerate(my_card_hints):
+            if not len(_hints):
+                my_leftmost_unhinted_idx = idx
+                break
+
+        if hints == 0:
+            return Discard(my_leftmost_unhinted_idx)
+
+        # BE A NICE PERSON AND WARN PEOPLE ABOUT PROBLEM CARDS BEFORE PLAYING YOUR OWN
+        for player, hand in other_hands.items():
+            player_leftmost_unhinted = get_leftmost_unhinted(hand)
+            if player_leftmost_unhinted is not None and is_problem_card(player_leftmost_unhinted, discarded):
+                hint = Hint(player, HintType.NUMBER, player_leftmost_unhinted.number)
+                if not hint_exists_on_card(player_leftmost_unhinted, hint):
+                    return hint
+        
         for idx, _hints in enumerate(my_card_hints):
             if sum([(hint.hint_value == 1) and (hint.hint_type == HintType.NUMBER) for hint in _hints]) > 0:
                 return Play(idx)
             if sum([(hint.hint_type == HintType.COLOR) for hint in _hints]) > 0:
                 return Play(idx)
 
-
-        my_leftmost_unhinted_idx = -1
-        for idx, _hints in enumerate(my_card_hints):
-            if not len(_hints):
-                my_leftmost_unhinted = idx
-
         colors_with_no_1s_played = [i for i, card in enumerate(played) if card.number == 0]
         colors_with_1s_played = [i for i, card in enumerate(played) if card.number >= 1]
-
-        if hints == 0:
-            return Discard(0)
 
         for player, hand in other_hands.items():
             if sum([(card.number == 1) and (card.color in colors_with_no_1s_played) for card in hand]) > 0:
                 hint = Hint(player, HintType.NUMBER, 1)
                 if sum([hint_exists_on_card(card, hint) for card in hand]) == 0:
-                    return hint
-
-            
-
-            if is_problem_card(hand[0], discarded):
-                hint = Hint(player, HintType.NUMBER, hand[0])
-                if not hint_exists_on_card(hand[0], hint) == 0:
                     return hint
 
             for color in colors_with_1s_played:
@@ -87,4 +88,4 @@ class RetardedPlayer(Player):
                 if eq(rightmost_color_card, next_card_on_top) and not hint_exists_on_card(rightmost_color_card, impending_hint):
                     return impending_hint
 
-        return Discard(0)
+        return Discard(my_leftmost_unhinted_idx)

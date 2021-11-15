@@ -40,7 +40,7 @@ class HanabiGame:
 
     def print_game_state(self):
         output = "HANDS  : " + " | ".join([f"P{player}: {cards}" for player, cards in self.player_cards.items()])
-        output += "\nPLAYED : " + str(self.played) + f"            STRIKES: {self.strikes}\n"
+        output += "\nPLAYED : " + str(self.played) + f"            STRIKES: {self.strikes}            HINTS: {self.num_hints}\n"
         print(output)
 
     def shuffle_cards(self) -> List[Card]:
