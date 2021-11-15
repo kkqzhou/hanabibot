@@ -20,11 +20,10 @@ def hint_exists_on_card(card: Card, impending_hint: Hint):
     return _impending_hint in {(hint.hint_type, hint.hint_value) for hint in card.hints}
 
 
-
 def is_problem_card(card: Card, discarded: List[Card]):
     if card.number in {2}:
         return True
-    if card.number in {3,4} and (card.color, card.number) in {(card.color, card.number) for card in discarded}:
+    if card.number in {3} and (card.color, card.number) in {(card.color, card.number) for card in discarded}:
         return True
     return False
 
@@ -63,17 +62,19 @@ class RetardedPlayer(Player):
                 if not hint_exists_on_card(player_leftmost_unhinted, hint):
                     return hint
         
+        colors_with_no_1s_played = [i for i, card in enumerate(played) if card.number == 0]
+        colors_with_1s_played = [i for i, card in enumerate(played) if card.number >= 1]
+
+        # play my cards
         for i in range(len(my_card_hints)):
             idx = len(my_card_hints) - i - 1
             _hints = my_card_hints[idx]
             if sum([(hint.hint_value == 1) and (hint.hint_type == HintType.NUMBER) for hint in _hints]) > 0:
-                return Play(idx)
+                return Play(idx) if len(colors_with_no_1s_played) else Discard(idx)
             if sum([(hint.hint_type == HintType.COLOR) for hint in _hints]) > 0:
                 return Play(idx)
 
-        colors_with_no_1s_played = [i for i, card in enumerate(played) if card.number == 0]
-        colors_with_1s_played = [i for i, card in enumerate(played) if card.number >= 1]
-
+        # hint others
         for player, hand in other_hands.items():
             if sum([(card.number == 1) and (card.color in colors_with_no_1s_played) for card in hand]) > 0:
                 hint = Hint(player, HintType.NUMBER, 1)

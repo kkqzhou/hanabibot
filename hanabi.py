@@ -83,6 +83,8 @@ class HanabiGame:
         last_played = self.played[idx_played_to]
         if last_played.number == card.number - 1:
             last_played.number += 1
+            if last_played.number == 5:
+                self.num_hints += 1
             return True
         return False
 
