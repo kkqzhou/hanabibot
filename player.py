@@ -32,5 +32,13 @@ Action = Union[Hint, Discard, Play]
 
 class Player(ABC):
     @abstractmethod
-    def play(self, who_am_i: int, other_hands: Dict[int, List[Card]], played: List[Card], discarded: List[Card], history: List[Action]) -> Action:
+    def play(self,
+        who_am_i: int,
+        other_hands: Dict[int, List[Card]],
+        played: List[Card],
+        discarded: List[Card],
+        history: List[Action],
+        hints: int,
+        strikes: int,
+    ) -> Action:
         pass

@@ -31,6 +31,13 @@ class HanabiGame:
         self.player_cards, self.deck = self.deal_cards(self.deck)
         self.players = players
 
+        self.history = []
+        self.played = [Card(i, 0) for i in range(NUM_COLORS)]
+        self.discarded = []
+        self.strikes = 0
+        self.hints = 8
+
+
     def shuffle_cards(self) -> List[Card]:
         deck = []
         for i in range(NUM_COLORS):
@@ -57,46 +64,88 @@ class HanabiGame:
             raise NotImplementedError
 
     def draw_new_card(self, player_num: int, card_idx: int):
-        pass
-
-    def play_card(self, card: Card):
+        cards = self.player_cards[player_num]
+        # Count played/discarded both as discarded
+        self.discarded.append(cards[card_idx])
+        del cards[card_idx]
+        new_card = None
+        if self.deck:
+            new_card = self.deck.pop()
+        if not new_card:
+            return False
+        cards.append(new_card)
         return True
 
+    def play_card(self, card: Card):
+        idx_played_to = card.color
+        last_played = self.played[idx_played_to]
+        if last_played.number == card.number - 1:
+            last_played.number += 1
+            return True
+        return False
+
     def play_complete(self):
-        history = []
-        played = [Card(i, 0) for i in range(NUM_COLORS)]
-        discarded = []
-        strikes = 0
-        hints = 8
-        for i, player in enumerate(self.players):
-            visible_hands = {
-                j: player_cards for j, player_cards in self.player_cards.items() if i != j
-            }
-            new_action = player.play(i, visible_hands, played, discarded, history)
-            history.append(new_action)
-            if isinstance(new_action, Play):
-                idx = new_action.idx
-                card = self.player_cards[i][idx]
-                new_action.card = card
-                if self.play_card(card):
-                    new_action.success = True
-                else:
-                    new_action.sucess = False
-                    strikes += 1
-                self.draw_new_card(i, idx)
-            elif isinstance(new_action, Hint):
-                hints -= 1
-            elif isinstance(new_action, Discard):
-                idx = new_action.idx
-                card = self.player_cards[i][idx]
-                new_action.card = card
-                hints += 1
-                self.draw_new_card(i, idx)
-        
+        done = False
+        counting_down_out_of_cards = False
+        count_down_out_of_cards = 0
+
+        while not done:
+            for i, player in enumerate(self.players):
+                visible_hands = {
+                    j: player_cards for j, player_cards in self.player_cards.items() if i != j
+                }
+                new_action = player.play(i,
+                    visible_hands,
+                    self.played,
+                    self.discarded,
+                    self.history,
+                    self.hints,
+                    self.strikes
+                )
+                self.history.append(new_action)
+                remaining_cards = True
+                if isinstance(new_action, Play):
+                    idx = new_action.idx
+                    card = self.player_cards[i][idx]
+                    new_action.card = card
+                    if self.play_card(card):
+                        new_action.success = True
+                    else:
+                        new_action.sucess = False
+                        self.strikes += 1
+                    remaining_cards = self.draw_new_card(i, idx)
+                elif isinstance(new_action, Hint):
+                    self.hints -= 1
+                elif isinstance(new_action, Discard):
+                    idx = new_action.idx
+                    card = self.player_cards[i][idx]
+                    new_action.card = card
+                    self.hints += 1
+                    remaining_cards = self.draw_new_card(i, idx)
+                    
+                if not remaining_cards and not counting_down_out_of_cards:
+                    counting_down_out_of_cards = True
+                    count_down_out_of_cards = self.num_players
+
+                if self.strikes >= 3:
+                    done = True
+                    print("Structed out")
+                    break
+
+                if counting_down_out_of_cards:
+                    count_down_out_of_cards -= 1
+                    if not count_down_out_of_cards:
+                        done = True
+                        break
+
+
+
 
 if __name__ == '__main__':
     np.random.seed(123456789)
-    game = HanabiGame(players=[1,2,3,4])
+    from dumb_player import DumbPlayer
+    game = HanabiGame(players=[DumbPlayer() for _ in range(4)])
     print(game.player_cards)
     print(len(game.deck))
     print(game.deck)
+    print(game.play_complete())
