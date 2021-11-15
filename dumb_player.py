@@ -48,6 +48,9 @@ class SmartDumbPlayer(Player):
         for i, hand in other_hands.items():
             for card in hand:
                 if card.number == next_number and not card.hints:
+                    p_number = played[card.color].number
+                    if p_number >= card.number:
+                        continue
                     next_player = i
 
         if hints > 0 and next_player is not None:

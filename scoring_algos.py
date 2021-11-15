@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 from typing import List
 from hanabi import HanabiGame
@@ -18,5 +19,6 @@ def score_algo(algo, tries=100000):
 
 
 if __name__ == '__main__':
+    random.seed(0)
     score_algo(SmartDumbPlayer)
 
