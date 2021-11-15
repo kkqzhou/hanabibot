@@ -109,7 +109,7 @@ class HanabiGame:
                         self.strikes += 1
                     remaining_cards = self.draw_new_card(i, idx)
                 elif isinstance(new_action, Hint):
-                    if self.hints > 1:
+                    if self.hints >= 1:
                         self.hints -= 1
                     else:
                         raise IndentationError("you don't have any valid hints, foo")
