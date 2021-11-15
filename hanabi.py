@@ -32,7 +32,7 @@ class HanabiGame:
         self.player_cards, self.deck = self.deal_cards(self.deck)
 
         self.history = []
-        self.played = [Card(i, 0) for i in range(NUM_COLORS)]
+        self.played = [Card(i, 0, []) for i in range(NUM_COLORS)]
         self.discarded = []
         self.strikes = 0
         self.num_hints = 8
@@ -40,7 +40,7 @@ class HanabiGame:
     def shuffle_cards(self) -> List[Card]:
         deck = []
         for i in range(NUM_COLORS):
-            deck.extend([Card(i, 1)] * 3 + [Card(i, 2)] * 2 + [Card(i, 3)] * 2 + [Card(i, 4)] * 2 + [Card(i, 5)])
+            deck.extend([Card(i, 1, [])] * 3 + [Card(i, 2, [])] * 2 + [Card(i, 3, [])] * 2 + [Card(i, 4, [])] * 2 + [Card(i, 5, [])])
         random.shuffle(deck)
         return deck
 
@@ -117,11 +117,11 @@ class HanabiGame:
                         if new_action.hint_type == HintType.COLOR:
                             for card in self.player_cards[new_action.player]:
                                 if card.color == new_action.hint_value:
-                                    card.add_hint(new_action)
+                                    card.hints.append(new_action)
                         elif new_action.hint_type == HintType.NUMBER:
                             for card in self.player_cards[new_action.player]:
                                 if card.number == new_action.hint_value:
-                                    card.add_hint(new_action)
+                                    card.hints.append(new_action)
 
                         self.num_hints -= 1
                     else:
