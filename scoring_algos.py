@@ -5,7 +5,7 @@ from hanabi import HanabiGame
 from dumb_player import SmartDumbPlayer
 
 def print_stats(scores: List[int]):
-    print(np.mean(scores), np.median(scores), np.max(scores), np.min(scores), np.std(scores))
+    print('mean', np.mean(scores), 'std', np.std(scores), 'min', np.min(scores), 'med', np.median(scores), 'max', np.max(scores))
 
 def score_algo(algo, tries=100000):
     scores = []
