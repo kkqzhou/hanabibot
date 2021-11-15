@@ -143,3 +143,4 @@ if __name__ == '__main__':
     print(len(game.deck))
     print(game.deck)
     print(game.play_complete())
+    print(game.history)
