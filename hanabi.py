@@ -72,7 +72,7 @@ class HanabiGame:
 
 if __name__ == '__main__':
     np.random.seed(123456789)
-    game = HanabiGame(num_players=4)
+    game = HanabiGame(players=[1,2,3,4])
     print(game.player_cards)
     print(len(game.deck))
     print(game.deck)

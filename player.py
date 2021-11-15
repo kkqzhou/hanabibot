@@ -1,4 +1,4 @@
-from Typing import Dict, List
+from typing import Dict, List
 from card import Card
 from abc import ABC, abstractmethod
 
