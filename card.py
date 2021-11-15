@@ -9,7 +9,7 @@ class HintType(enum.Enum):
     NUMBER = 1
 
 
-@dataclass(frozen=True)
+@dataclass
 class Hint:
     player: int
     hint_type: HintType

@@ -4,6 +4,7 @@ import random
 from typing import List
 from hanabi import HanabiGame
 from dumb_player import SmartDumbPlayer
+from retarded_player import RetardedPlayer
 
 def print_stats(scores: List[int]):
     print('mean', np.mean(scores), 'std', np.std(scores), 'min', np.min(scores), 'med', np.median(scores), 'max', np.max(scores))
@@ -20,5 +21,5 @@ def score_algo(algo, tries=100000):
 
 if __name__ == '__main__':
     random.seed(0)
-    score_algo(SmartDumbPlayer)
+    score_algo(RetardedPlayer, tries=10000)
 

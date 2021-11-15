@@ -39,8 +39,8 @@ class HanabiGame:
         self.num_hints = 8
 
     def print_game_state(self):
-        output = " | ".join([f"P{player}: {cards}" for player, cards in self.player_cards.items()])
-        output += "\n"
+        output = "HANDS  : " + " | ".join([f"P{player}: {cards}" for player, cards in self.player_cards.items()])
+        output += "\nPLAYED : " + str(self.played) + f"            STRIKES: {self.strikes}\n"
         print(output)
 
     def shuffle_cards(self) -> List[Card]:
@@ -140,13 +140,18 @@ class HanabiGame:
                     new_action.card = card
                     self.num_hints += 1
                     remaining_cards = self.draw_new_card(i, idx)
-                    
+                
+                if self.verbose:
+                    print('Player', i, 'does', new_action.__class__.__name__, new_action)
+
                 if not remaining_cards and not counting_down_out_of_cards:
                     counting_down_out_of_cards = True
                     count_down_out_of_cards = self.num_players
 
                 if self.strikes >= 3:
                     done = True
+                    if self.verbose:
+                        print('YOU LOST')
                     break
 
                 if counting_down_out_of_cards:
@@ -161,12 +166,9 @@ class HanabiGame:
         return sum([card.number for card in self.played])
 
 if __name__ == '__main__':
-    np.random.seed(123456789)
-    from dumb_player import DumbPlayer, DumberPlayer
-    game = HanabiGame(players=[DumberPlayer() for _ in range(4)])
-
-    print(game.player_cards)
-    print(len(game.deck))
+    random.seed(0)
+    from retarded_player import RetardedPlayer
+    game = HanabiGame(players=[RetardedPlayer() for _ in range(4)], verbose=True)
 
     print(game.play_complete())
     print(game.history)
