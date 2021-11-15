@@ -20,6 +20,7 @@ def hint_exists_on_card(card: Card, impending_hint: Hint):
     return _impending_hint in {(hint.hint_type, hint.hint_value) for hint in card.hints}
 
 
+
 def is_problem_card(card: Card, discarded: List[Card]):
     if card.number in {2}:
         return True
