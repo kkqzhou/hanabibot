@@ -41,13 +41,7 @@ class HanabiGame:
     def shuffle_cards(self) -> List[Card]:
         deck = []
         for i in range(NUM_COLORS):
-            for j in range(1,6):
-                count = 1
-                if j == 1:
-                    count = 3
-                if j < 5:
-                    count = 2
-                deck.append(Card(i, j))
+            deck.extend([Card(i, 1)] * 3 + [Card(i, 2)] * 2 + [Card(i, 3)] * 2 + [Card(i, 4)] * 2 + [Card(i, 5)])
         random.shuffle(deck)
         return deck
 
@@ -63,7 +57,7 @@ class HanabiGame:
         else:
             raise NotImplementedError
 
-    def draw_new_card(self, player_num: int, card_idx: int):
+    def draw_new_card(self, player_num: int, card_idx: int) -> bool:
         cards = self.player_cards[player_num]
         # Count played/discarded both as discarded
         self.discarded.append(cards[card_idx])
@@ -76,7 +70,7 @@ class HanabiGame:
         cards.append(new_card)
         return True
 
-    def play_card(self, card: Card):
+    def play_card(self, card: Card) -> bool:
         idx_played_to = card.color
         last_played = self.played[idx_played_to]
         if last_played.number == card.number - 1:
@@ -84,7 +78,7 @@ class HanabiGame:
             return True
         return False
 
-    def play_complete(self):
+    def play_complete(self) -> int:
         done = False
         counting_down_out_of_cards = False
         count_down_out_of_cards = 0
