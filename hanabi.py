@@ -155,6 +155,9 @@ class HanabiGame:
                         done = True
                         break
 
+                if self.verbose:
+                    self.print_game_state()
+
         return sum([card.number for card in self.played])
 
 if __name__ == '__main__':
