@@ -6,21 +6,23 @@ from hanabi import HanabiGame
 from dumb_player import SmartDumbPlayer
 from retarded_player import RetardedPlayer
 
-def print_stats(scores: List[int]):
-    print('mean', np.mean(scores), 'std', np.std(scores), 'min', np.min(scores), 'med', np.median(scores), 'max', np.max(scores))
+def print_stats(scores: List[int], strikes: int):
+    print('mean', np.mean(scores), 'std', np.std(scores), 'min', np.min(scores), 'med', np.median(scores), 'max', np.max(scores), 'strike %', strikes / len(scores))
 
 def score_algo(algo, tries=10000):
     scores = []
     count_wins = 0
+    strikes = 0
     for _ in range(tries):
         game = HanabiGame(players=[algo() for _ in range(4)])
         score = game.play_complete()
         scores.append(score)
+        strikes += (game.strikes >= 3)
         if score == 30:
             count_wins += 1
             print("WON!!!", count_wins)
 
-    print_stats(scores)
+    print_stats(scores, strikes)
 
 
 if __name__ == '__main__':
