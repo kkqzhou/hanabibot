@@ -132,8 +132,7 @@ class HanabiGame:
                         done = True
                         break
 
-
-
+        return sum([card.number for card in self.played])
 
 if __name__ == '__main__':
     np.random.seed(123456789)
