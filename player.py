@@ -23,14 +23,6 @@ class Player(ABC):
     def __init__(self):
         pass
 
-    def set_num_cards(self, num_cards):
-        self.num_cards = num_cards
-        #self.hints: List[Set[Hint]] = [set()] * num_cards
-
-    #def receive_hint(self, idx_to_hint: Dict[int, Hint]):
-    #    for idx, hint in idx_to_hint.items():
-    #        self.hints[idx].add(hint)
-
     @abstractmethod
     def play(self,
         who_am_i: int,
@@ -40,5 +32,6 @@ class Player(ABC):
         history: List[Action],
         num_hints: int,
         strikes: int,
+        my_card_hints: List[List[Hint]],
     ) -> Action:
         pass

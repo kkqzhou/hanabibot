@@ -11,6 +11,7 @@ class DumberPlayer(Player):
         history: List[Action],
         hints: int,
         strikes: int,
+        my_card_hints: List[List[Hint]],
     ) -> Action:
         return Hint((1 + who_am_i) % 4, HintType.NUMBER, 1)
 
@@ -23,5 +24,6 @@ class DumbPlayer(Player):
         history: List[Action],
         hints: int,
         strikes: int,
+        my_card_hints: List[List[Hint]],
     ) -> Action:
         return Play(0)

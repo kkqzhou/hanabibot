@@ -48,14 +48,10 @@ class HanabiGame:
         if self.num_players in {2, 3}:
             player_cards = {i: deck[i*5:(i+1)*5] for i in range(self.num_players)}
             deck = deck[self.num_players*5:]
-            for i in range(self.num_players):
-                self.players[i].set_num_cards(5)
             return player_cards, deck
         elif self.num_players in {4, 5}:
             player_cards = {i: deck[i*4:(i+1)*4] for i in range(self.num_players)}
             deck = deck[self.num_players*4:]
-            for i in range(self.num_players):
-                self.players[i].set_num_cards(4)
             return player_cards, deck
         else:
             raise NotImplementedError
@@ -91,13 +87,16 @@ class HanabiGame:
                 visible_hands = {
                     j: player_cards for j, player_cards in self.player_cards.items() if i != j
                 }
+                my_hand = self.player_cards[i]
+                my_hand_hints = [card.hints for card in my_hand]
                 new_action = player.play(i,
                     visible_hands,
                     self.played,
                     self.discarded,
                     self.history,
                     self.num_hints,
-                    self.strikes
+                    self.strikes,
+                    my_hand_hints,
                 )
                 self.history.append(new_action)
                 remaining_cards = True
