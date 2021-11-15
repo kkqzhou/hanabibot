@@ -3,7 +3,7 @@ import numpy as np
 import random
 from typing import Dict, Iterable, List, Tuple
 from card import Card
-from player import Player
+from player import Player, Hint, Play, Discard
 
 """
 Game rules for the card game Hanabi are encoded here. The standard setup of the game involves 60 Hanabi cards, 
@@ -30,8 +30,6 @@ class HanabiGame:
         self.deck: List[Card] = self.shuffle_cards()
         self.player_cards, self.deck = self.deal_cards(self.deck)
         self.players = players
-        self.strikes = 0
-        self.hints = 8
 
     def shuffle_cards(self) -> List[Card]:
         deck = []
@@ -58,17 +56,42 @@ class HanabiGame:
         else:
             raise NotImplementedError
 
+    def draw_new_card(self, player_num: int, card_idx: int):
+        pass
+
+    def play_card(self, card: Card):
+        return True
+
     def play_complete(self):
         history = []
         played = [Card(i, 0) for i in range(NUM_COLORS)]
         discarded = []
+        strikes = 0
+        hints = 8
         for i, player in enumerate(self.players):
             visible_hands = {
                 j: player_cards for j, player_cards in self.player_cards.items() if i != j
             }
             new_action = player.play(i, visible_hands, played, discarded, history)
             history.append(new_action)
-            # TBD: Check strikes/hints/played
+            if isinstance(new_action, Play):
+                idx = new_action.idx
+                card = self.player_cards[i][idx]
+                new_action.card = card
+                if self.play_card(card):
+                    new_action.success = True
+                else:
+                    new_action.sucess = False
+                    strikes += 1
+                self.draw_new_card(i, idx)
+            elif isinstance(new_action, Hint):
+                hints -= 1
+            elif isinstance(new_action, Discard):
+                idx = new_action.idx
+                card = self.player_cards[i][idx]
+                new_action.card = card
+                hints += 1
+                self.draw_new_card(i, idx)
         
 
 if __name__ == '__main__':
