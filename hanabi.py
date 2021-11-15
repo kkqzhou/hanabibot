@@ -25,7 +25,8 @@ TOTAL_NUM_CARDS = 60
 NUM_COLORS = 6
 
 class HanabiGame:
-    def __init__(self, players: List[Player]):
+    def __init__(self, players: List[Player], verbose: bool = True):
+        self.verbose = verbose
         self.players = players
         self.num_players = len(players)
         self.deck: List[Card] = self.shuffle_cards()
@@ -37,10 +38,18 @@ class HanabiGame:
         self.strikes = 0
         self.num_hints = 8
 
+    def print_game_state(self):
+        output = " | ".join([f"P{player}: {cards}" for player, cards in self.player_cards.items()])
+        output += "\n"
+        print(output)
+
     def shuffle_cards(self) -> List[Card]:
         deck = []
         for i in range(NUM_COLORS):
-            deck.extend([Card(i, 1, [])] * 3 + [Card(i, 2, [])] * 2 + [Card(i, 3, [])] * 2 + [Card(i, 4, [])] * 2 + [Card(i, 5, [])])
+            deck.extend([
+                Card(i, 1, []), Card(i, 1, []), Card(i, 1, []), Card(i, 2, []), Card(i, 2, []),
+                Card(i, 3, []), Card(i, 3, []), Card(i, 4, []), Card(i, 4, []), Card(i, 5, [])
+            ])
         random.shuffle(deck)
         return deck
 
@@ -147,7 +156,7 @@ class HanabiGame:
                         done = True
                         break
 
-                print(self.player_cards)
+                self.print_game_state()
 
         return sum([card.number for card in self.played])
 

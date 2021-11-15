@@ -15,8 +15,14 @@ class Hint:
     hint_type: HintType
     hint_value: int # Matches hint_type, is color or number depending
 
+    def __repr__(self) -> str:
+        return f"p{self.player} {self.hint_type.name} {self.hint_value}"
+
 @dataclass
 class Card:
     color: int
     number: int
     hints: List[Hint]
+
+    def __repr__(self) -> str:
+        return f"{self.color}/{self.number}" + (" " + str(self.hints) if len(self.hints) else "")
