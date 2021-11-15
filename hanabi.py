@@ -123,7 +123,6 @@ class HanabiGame:
 
                 if self.strikes >= 3:
                     done = True
-                    print("Structed out")
                     break
 
                 if counting_down_out_of_cards:
