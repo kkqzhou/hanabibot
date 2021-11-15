@@ -61,11 +61,12 @@ class HanabiGame:
     def play_complete(self):
         history = []
         played = [Card(i, 0) for i in range(NUM_COLORS)]
+        discarded = []
         for i, player in enumerate(self.players):
             visible_hands = {
                 j: player_cards for j, player_cards in self.player_cards.items() if i != j
             }
-            new_action = player.play(i, visible_hands, played, history)
+            new_action = player.play(i, visible_hands, played, discarded, history)
             history.append(new_action)
             # TBD: Check strikes/hints/played
         

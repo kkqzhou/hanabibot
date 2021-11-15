@@ -8,5 +8,5 @@ class Action:
 
 class Player(ABC):
     @abstractmethod
-    def play(self, who_am_i: int, other_hand: Dict[int, List[Card]], played: List[Card], history: List[Action]) -> Action:
+    def play(self, who_am_i: int, other_hands: Dict[int, List[Card]], played: List[Card], discarded: List[Card], history: List[Action]) -> Action:
         pass
