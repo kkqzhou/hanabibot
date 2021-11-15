@@ -1,5 +1,6 @@
 import numpy as np
 
+import random
 from typing import Dict, Iterable, List, Tuple
 
 """
@@ -20,22 +21,34 @@ Representations:
 
 TOTAL_NUM_CARDS = 60
 
-def card_to_color(card: int) -> int:
-    return card // 10
+class Card:
+    def __init__(self, color, number):
+        self.color = color
+        self.number = number
 
-def card_to_number(card: int) -> int:
-    return {0: 1, 1: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 3, 7: 4, 8: 4, 9: 5}[card % 10]
+    def __repr__(self):
+        return ("Card{%s, %s}" % (self.color, self.number))
 
 class HanabiGame:
     def __init__(self, num_players: int):
         self.num_players = num_players
-        self.deck: Iterable[int] = self.shuffle_cards()
+        self.deck: List[Card] = self.shuffle_cards()
         self.player_cards, self.deck = self.deal_cards(self.deck)
 
-    def shuffle_cards(self) -> Iterable[int]:
-        return np.random.permutation(TOTAL_NUM_CARDS)
+    def shuffle_cards(self) -> List[Card]:
+        deck = []
+        for i in range(6):
+            for j in range(1,6):
+                count = 1
+                if j == 1:
+                    count = 3
+                if j < 5:
+                    count = 2
+                deck.append(Card(i, j))
+        random.shuffle(deck)
+        return deck
 
-    def deal_cards(self, deck: Iterable[int]) -> Tuple[Dict[int, Iterable[int]], Iterable[int]]:
+    def deal_cards(self, deck: List[Card]) -> Tuple[Dict[int, List[Card]], List[Card]]:
         if self.num_players in {2, 3}:
             player_cards = {i: deck[i*5:(i+1)*5] for i in range(self.num_players)}
             deck = deck[self.num_players*5:]
