@@ -6,6 +6,8 @@ from typing import Dict, Iterable, List, Tuple
 from card import Card
 from player import Player
 
+import tabulate
+
 """
 Game rules for the card game Hanabi are encoded here. The standard setup of the game involves 60 Hanabi cards, 
 8 Hint tokens, and 3 Misplay tokens. The Hanabi cards are distributed as follows:
@@ -41,7 +43,8 @@ class HanabiGame:
 
     def print_game_state(self):
         output = "HANDS  : " + " | ".join([f"P{player}: {cards}" for player, cards in self.player_cards.items()])
-        output += "\nPLAYED : " + str(self.played) + f"            STRIKES: {self.strikes}            HINTS: {self.num_hints}\n"
+        output += "\nPLAYED : " + str(self.played) + f"            STRIKES: {self.strikes}            HINTS: {self.num_hints}"
+        output += f"            CARDS LEFT: {len(self.deck)}\n"
         print(output)
 
     def shuffle_cards(self) -> List[Card]:
@@ -138,11 +141,11 @@ class HanabiGame:
                     self.num_hints += 1
                     remaining_cards = self.draw_new_card(i, idx)
 
+                if self.verbose:
+                    print('Player', i, 'does', new_action)
+
                 for player in self.players:
                     player.event_tracker(new_action)
-                
-                if self.verbose:
-                    print('Player', i, 'does', new_action.__class__.__name__, new_action)
 
                 if not remaining_cards and not counting_down_out_of_cards:
                     counting_down_out_of_cards = True
@@ -158,6 +161,8 @@ class HanabiGame:
                     count_down_out_of_cards -= 1
                     if not count_down_out_of_cards:
                         done = True
+                        if self.verbose:
+                            print('NO MOAR CARDS')
                         break
 
                 if self.verbose:
@@ -166,8 +171,12 @@ class HanabiGame:
         return sum([card.number for card in self.played])
 
 if __name__ == '__main__':
-    from retarded_player import RetardedPlayer
-    game = HanabiGame(players=[RetardedPlayer(i, 4, NUM_COLORS) for i in range(4)], verbose=True)
+    num_players = 4
+    from smart_player import SmartPlayer
+    game = HanabiGame(players=[SmartPlayer(i, 4, NUM_COLORS) for i in range(num_players)], verbose=True)
 
-    print(game.play_complete())
-    print(game.history)
+    print('Final Score:', game.play_complete())
+    print(tabulate.tabulate(
+        [game.history[i*num_players:(i+1)*num_players] for i in range(len(game.history) // num_players)],
+        headers=[f'Player {x}' for x in range(num_players)]
+    ))
