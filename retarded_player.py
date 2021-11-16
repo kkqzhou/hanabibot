@@ -1,6 +1,7 @@
-from player import Player, Action, Play, Discard
+from action import Action, Play, Discard, Hint, HintType
+from old_player import OldPlayer
 from typing import Dict, List, Optional
-from card import Card, Hint, HintType
+from card import Card
 
 
 def eq(card1: Card, card2: Card):
@@ -33,8 +34,8 @@ def get_leftmost_unhinted(hand: List[Card]) -> Optional[Card]:
     return unhinted[0] if len(unhinted) else None
 
 
-class RetardedPlayer(Player):
-    def play(self,
+class RetardedPlayer(OldPlayer):
+    def old_play(self,
         who_am_i: int,
         other_hands: Dict[int, List[Card]],
         played: List[Card],

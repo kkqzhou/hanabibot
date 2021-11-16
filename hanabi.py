@@ -1,9 +1,10 @@
 import numpy as np
 
 import random
+from action import Hint, HintType, Play, Discard
 from typing import Dict, Iterable, List, Tuple
-from card import Card, Hint, HintType
-from player import Player, Play, Discard
+from card import Card
+from player import Player
 
 """
 Game rules for the card game Hanabi are encoded here. The standard setup of the game involves 60 Hanabi cards, 
@@ -54,10 +55,12 @@ class HanabiGame:
         return deck
 
     def deal_cards(self, deck: List[Card]) -> Tuple[Dict[int, List[Card]], List[Card]]:
+        # 5 cards per player
         if self.num_players in {2, 3}:
             player_cards = {i: deck[i*5:(i+1)*5] for i in range(self.num_players)}
             deck = deck[self.num_players*5:]
             return player_cards, deck
+        # 4 cards per player
         elif self.num_players in {4, 5}:
             player_cards = {i: deck[i*4:(i+1)*4] for i in range(self.num_players)}
             deck = deck[self.num_players*4:]
@@ -100,48 +103,47 @@ class HanabiGame:
                 }
                 my_hand = self.player_cards[i]
                 my_hand_hints = [card.hints for card in my_hand]
-                new_action = player.play(i,
-                    visible_hands,
-                    self.played,
-                    self.discarded,
-                    self.history,
-                    self.num_hints,
-                    self.strikes,
-                    my_hand_hints,
+                if my_hand_hints != player.my_card_hints:
+                    print(my_hand_hints, player.my_card_hints)
+                new_action = player.play(
+                    visible_hands
                 )
+                new_action.actor = i
                 self.history.append(new_action)
                 remaining_cards = True
+                # Update state information for the new actions
                 if isinstance(new_action, Play):
                     idx = new_action.idx
                     card = self.player_cards[i][idx]
                     new_action.card = card
-                    if self.play_card(card):
-                        new_action.success = True
-                    else:
+                    new_action.success = True
+                    if not self.play_card(card):
                         new_action.success = False
                         self.strikes += 1
                     remaining_cards = self.draw_new_card(i, idx)
                 elif isinstance(new_action, Hint):
-                    if self.num_hints >= 1:
-
-                        if new_action.hint_type == HintType.COLOR:
-                            for card in self.player_cards[new_action.player]:
-                                if card.color == new_action.hint_value:
-                                    card.hints.append(new_action)
-                        elif new_action.hint_type == HintType.NUMBER:
-                            for card in self.player_cards[new_action.player]:
-                                if card.number == new_action.hint_value:
-                                    card.hints.append(new_action)
-
-                        self.num_hints -= 1
-                    else:
+                    if self.num_hints <= 0:
                         raise IndentationError("you don't have any valid hints, foo")
+                    new_action.matches_cards = []
+                    # Default to number, override with color if needed
+                    matches = lambda card: new_action.hint_value == card.number
+                    if new_action.hint_type == HintType.COLOR:
+                        matches = lambda card: new_action.hint_value == card.color
+                    for i, card in enumerate(self.player_cards[new_action.player]):
+                        if matches(card):
+                            card.hints.append(new_action)
+                            new_action.matches_cards.append(i)
+
+                    self.num_hints -= 1
                 elif isinstance(new_action, Discard):
                     idx = new_action.idx
                     card = self.player_cards[i][idx]
                     new_action.card = card
                     self.num_hints += 1
                     remaining_cards = self.draw_new_card(i, idx)
+
+                for player in self.players:
+                    player.event_tracker(new_action)
                 
                 if self.verbose:
                     print('Player', i, 'does', new_action.__class__.__name__, new_action)
@@ -168,9 +170,8 @@ class HanabiGame:
         return sum([card.number for card in self.played])
 
 if __name__ == '__main__':
-    random.seed(0)
     from retarded_player import RetardedPlayer
-    game = HanabiGame(players=[RetardedPlayer() for _ in range(4)], verbose=True)
+    game = HanabiGame(players=[RetardedPlayer(i, 4, NUM_COLORS) for i in range(4)], verbose=True)
 
     print(game.play_complete())
     print(game.history)

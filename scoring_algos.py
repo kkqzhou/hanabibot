@@ -14,7 +14,7 @@ def score_algo(algo, tries=10000):
     count_wins = 0
     strikes = 0
     for _ in range(tries):
-        game = HanabiGame(players=[algo() for _ in range(4)])
+        game = HanabiGame(players=[algo(i, 4, 6) for i in range(4)])
         score = game.play_complete()
         scores.append(score)
         strikes += (game.strikes >= 3)

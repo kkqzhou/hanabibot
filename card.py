@@ -2,21 +2,7 @@ from dataclasses import dataclass
 import enum
 
 from typing import List, Optional
-
-
-class HintType(enum.Enum):
-    COLOR = 0
-    NUMBER = 1
-
-
-@dataclass
-class Hint:
-    player: int
-    hint_type: HintType
-    hint_value: int # Matches hint_type, is color or number depending
-
-    def __repr__(self) -> str:
-        return f"H(p{self.player} {self.hint_type.name} {self.hint_value})"
+from action import Hint
 
 @dataclass
 class Card:
