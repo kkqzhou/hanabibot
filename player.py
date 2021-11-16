@@ -37,6 +37,7 @@ class SimplePlayer(Player):
 
     def update_self_hints(self, event: Action):
         if isinstance(event, Hint):
+            self.num_hints -= 1
             if event.player == self.who_am_i:
                 for idx in event.matches_cards:
                     self.my_card_hints[idx].append(event)
@@ -47,6 +48,9 @@ class SimplePlayer(Player):
                 del self.my_card_hints[event.idx]
                 self.my_card_hints.append([])
 
+        if isinstance(event, Discard):
+            self.num_hints += 1
+
     def update_discarded(self, event: Action):
         if isinstance(event, (Play, Discard)):
             self.discarded.append(event.card)
@@ -55,14 +59,8 @@ class SimplePlayer(Player):
         self.history.append(event)
         self.update_self_hints(event)
         self.update_discarded(event)
-        if isinstance(event, Hint):
-            self.num_hints -= 1
-
         if isinstance(event, Play):
             if not event.success:
                 self.strikes += 1
             else:
-                self.played[event.card.color].number += 1
-
-        if isinstance(event, Discard):
-            self.num_hints += 1
+                self.played[event.card.color].number = event.card.number

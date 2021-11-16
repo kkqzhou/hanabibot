@@ -101,10 +101,12 @@ class HanabiGame:
                 }
                 my_hand = self.player_cards[i]
                 my_hand_hints = [card.hints for card in my_hand]
+                if my_hand_hints != player.my_card_hints:
+                    print(my_hand_hints, player.my_card_hints)
                 new_action = player.play(
                     visible_hands
                 )
-                new_action.player = i
+                new_action.actor = i
                 self.history.append(new_action)
                 remaining_cards = True
                 # Update state information for the new actions
@@ -112,27 +114,25 @@ class HanabiGame:
                     idx = new_action.idx
                     card = self.player_cards[i][idx]
                     new_action.card = card
-                    if self.play_card(card):
-                        new_action.success = True
-                    else:
+                    new_action.success = True
+                    if not self.play_card(card):
                         new_action.success = False
                         self.strikes += 1
                     remaining_cards = self.draw_new_card(i, idx)
                 elif isinstance(new_action, Hint):
-                    if self.num_hints >= 1:
-                        new_action.matches_cards = []
-                        # Default to number, override with color if needed
-                        matches = lambda card: new_action.hint_value == card.number
-                        if new_action.hint_type == HintType.COLOR:
-                            matches = lambda card: new_action.hint_value == card.color
-                        for i, card in enumerate(self.player_cards[new_action.player]):
-                            if matches(card):
-                                card.hints.append(new_action)
-                                new_action.matches_cards.append(i)
-
-                        self.num_hints -= 1
-                    else:
+                    if self.num_hints <= 0:
                         raise IndentationError("you don't have any valid hints, foo")
+                    new_action.matches_cards = []
+                    # Default to number, override with color if needed
+                    matches = lambda card: new_action.hint_value == card.number
+                    if new_action.hint_type == HintType.COLOR:
+                        matches = lambda card: new_action.hint_value == card.color
+                    for i, card in enumerate(self.player_cards[new_action.player]):
+                        if matches(card):
+                            card.hints.append(new_action)
+                            new_action.matches_cards.append(i)
+
+                    self.num_hints -= 1
                 elif isinstance(new_action, Discard):
                     idx = new_action.idx
                     card = self.player_cards[i][idx]
