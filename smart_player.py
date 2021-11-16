@@ -243,10 +243,9 @@ class SmartPlayer(Player):
                         players_info = self.player_hints[player][idx][0]
                         can_play = not self.player_hints[player][idx][1]
                         # Disregard if the person is already playing it or someone else is playing it
-                        if (can_play and self.is_playable_dumb(players_info, played)) or (card.color, card.number) in playable_number_colors:
-                            negative_hint_count += 1
+                        if (can_play and self.is_playable_dumb(players_info, played)):
                             continue
-                        if self.is_playable_dumb(card, played):
+                        if self.is_playable_dumb(card, played) and not (card.color, card.number) in playable_number_colors:
                             played_count += 1
                             played[card.color].number += 1
                         else:
