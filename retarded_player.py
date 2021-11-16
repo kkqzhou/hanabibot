@@ -1,7 +1,7 @@
+from action import Action, Play, Discard, Hint, HintType
 from old_player import OldPlayer
 from typing import Dict, List, Optional
 from card import Card
-from action import Hint, HintType, Action, Play, Discard
 
 
 def eq(card1: Card, card2: Card):
@@ -34,17 +34,6 @@ def get_leftmost_unhinted(hand: List[Card]) -> Optional[Card]:
     unhinted = [card for card in hand if not len(card.hints)]
     return unhinted[0] if len(unhinted) else None
 
-def number_hint(hints: List[Hint]) -> Optional[int]:
-    num_hints = [hint for hint in hints if hint.hint_type == HintType.NUMBER]
-    if num_hints:
-        return num_hints[0].hint_value
-    return None
-
-def color_hint(hints: List[Hint]) -> Optional[int]:
-    num_hints = [hint for hint in hints if hint.hint_type == HintType.COLOR]
-    if num_hints:
-        return num_hints[0].hint_value
-    return None
 
 class RetardedPlayer(OldPlayer):
     def old_play(self,
@@ -78,19 +67,10 @@ class RetardedPlayer(OldPlayer):
         for i in range(len(my_card_hints)):
             idx = len(my_card_hints) - i - 1
             _hints = my_card_hints[idx]
-            color = color_hint(_hints)
-            number = number_hint(_hints)
-            if number == 1:
-                any_playable = any(p.number == 0 for p in played)
-                if not any_playable:
-                    continue
-                if not color or played[color].number == 0:
-                    return Play(idx)
-                continue
-            if color is not None:
-                last_played = played[color].number
-                if not number or last_played == number -1:
-                    return Play(idx)
+            if sum([(hint.hint_value == 1) and (hint.hint_type == HintType.NUMBER) for hint in _hints]) > 0:
+                return Play(idx)
+            if sum([(hint.hint_type == HintType.COLOR) for hint in _hints]) > 0:
+                return Play(idx)
 
         colors_with_no_1s_played = [i for i, card in enumerate(played) if card.number == 0]
         colors_with_1s_played = [i for i, card in enumerate(played) if card.number >= 1]
