@@ -128,10 +128,10 @@ class HanabiGame:
                     matches = lambda card: new_action.hint_value == card.number
                     if new_action.hint_type == HintType.COLOR:
                         matches = lambda card: new_action.hint_value == card.color
-                    for i, card in enumerate(self.player_cards[new_action.player]):
+                    for idx, card in enumerate(self.player_cards[new_action.player]):
                         if matches(card):
                             card.hints.append(new_action)
-                            new_action.matches_cards.append(i)
+                            new_action.matches_cards.append(idx)
 
                     self.num_hints -= 1
                 elif isinstance(new_action, Discard):
