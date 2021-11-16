@@ -6,8 +6,10 @@ from hanabi import HanabiGame
 from dumb_player import SmartDumbPlayer
 from smart_player import SmartPlayer
 
-def print_stats(scores: List[int], strikes: int):
-    print('mean', np.mean(scores), 'std', np.std(scores), 'min', np.min(scores), 'med', np.median(scores), 'max', np.max(scores), 'strike %', strikes / len(scores))
+def print_stats(scores: List[int], strikes: int, wins: int):
+    strike_perc = strikes / len(scores) * 100 # Displayed as perc
+    win_perc = wins / len(scores) * 100 # Displayed as perc
+    print('mean', np.mean(scores), 'std', np.std(scores), 'min', np.min(scores), 'med', np.median(scores), 'max', np.max(scores), 'strike %', strike_perc, 'win %', win_perc)
 
 def score_algo(algo, tries=10000):
     scores = []
@@ -25,7 +27,7 @@ def score_algo(algo, tries=10000):
             count_wins += 1
             print("WON!!!", count_wins)
 
-    print_stats(scores, strikes)
+    print_stats(scores, strikes, count_wins)
 
 
 if __name__ == '__main__':
