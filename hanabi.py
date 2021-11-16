@@ -101,10 +101,6 @@ class HanabiGame:
                 visible_hands = {
                     j: player_cards for j, player_cards in self.player_cards.items() if i != j
                 }
-                my_hand = self.player_cards[i]
-                my_hand_hints = [card.hints for card in my_hand]
-                if my_hand_hints != player.my_card_hints:
-                    print(my_hand_hints, player.my_card_hints)
                 new_action = player.play(
                     visible_hands
                 )
