@@ -13,7 +13,7 @@ def score_algo(algo, tries=10000):
     scores = []
     count_wins = 0
     for _ in range(tries):
-        game = HanabiGame(players=[algo() for _ in range(4)])
+        game = HanabiGame(players=[algo(i, 4, 6) for i in range(4)])
         score = game.play_complete()
         scores.append(score)
         if score == 30:

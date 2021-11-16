@@ -1,9 +1,10 @@
-from player import Player, Action, Play, Discard
+from action import Hint, HintType, Action, Play, Discard
+from old_player import OldPlayer
 from typing import Dict, List
-from card import Card, Hint, HintType
+from card import Card
 
-class DumberPlayer(Player):
-    def play(self,
+class DumberPlayer(OldPlayer):
+    def old_play(self,
         who_am_i: int,
         other_hands: Dict[int, List[Card]],
         played: List[Card],
@@ -15,8 +16,8 @@ class DumberPlayer(Player):
     ) -> Action:
         return Hint((1 + who_am_i) % 4, HintType.NUMBER, 1)
 
-class DumbPlayer(Player):
-    def play(self,
+class DumbPlayer(OldPlayer):
+    def old_play(self,
         who_am_i: int,
         other_hands: Dict[int, List[Card]],
         played: List[Card],
@@ -28,8 +29,8 @@ class DumbPlayer(Player):
     ) -> Action:
         return Play(0)
 
-class SmartDumbPlayer(Player):
-    def play(self,
+class SmartDumbPlayer(OldPlayer):
+    def old_play(self,
         who_am_i: int,
         other_hands: Dict[int, List[Card]],
         played: List[Card],
