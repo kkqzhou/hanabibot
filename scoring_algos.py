@@ -17,7 +17,12 @@ def score_algo(algo, tries=10000):
     strikes = 0
     for i in range(tries):
         players = [algo(i, 4, 6) for i in range(4)]
-        game = HanabiGame(players=players)
+        verbose = False
+        if verbose:
+            # Hack for smart player
+            for p in players:
+                p.verbose = True
+        game = HanabiGame(players=players, verbose = verbose)
         score = game.play_complete()
         scores.append(score)
         strikes += (game.strikes >= 3)

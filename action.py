@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Union, List
 
-INT_TO_COLOR_REPR = {0: '♢', 1: '♧', 2: '♡', 3: '♠', 4: 'Δ', 5: 'Ͼ'}
+INT_TO_COLOR_REPR = {0: '♢', 1: '♧', 2: '♡', 3: '♠', 4: 'Δ', 5: 'Ͼ', None: "NoColor"}
 
 class HintType(Enum):
     COLOR = 0

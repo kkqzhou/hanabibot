@@ -219,7 +219,7 @@ class SmartPlayer(Player):
                 else:
                     continue
                 if self.is_playable_dumb(hint, self.played):
-                    playable_number_colors.add((actual_card.number, actual_card.color))
+                    playable_number_colors.add((actual_card.color, actual_card.number))
 
         for player, hand in other_hands.items():
             hint_options = []
@@ -245,6 +245,8 @@ class SmartPlayer(Player):
                         # Disregard if the person is already playing it or someone else is playing it
                         if (can_play and self.is_playable_dumb(players_info, played)):
                             continue
+                        if self.verbose:
+                            print(card.color, card.number, playable_number_colors)
                         if self.is_playable_dumb(card, played) and not (card.color, card.number) in playable_number_colors:
                             played_count += 1
                             played[card.color].number += 1
