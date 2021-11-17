@@ -1,7 +1,7 @@
 import numpy as np
 
 import random
-from action import Hint, HintType, Play, Discard
+from action import Hint, HintType, Play, Discard, INT_TO_COLOR_REPR
 from typing import Dict, Iterable, List, Tuple
 from card import Card
 from player import Player
@@ -42,9 +42,22 @@ class HanabiGame:
         self.num_hints = 8
 
     def print_game_state(self):
-        output = "HANDS  : " + " | ".join([f"P{player}: {cards}" for player, cards in self.player_cards.items()])
-        output += "\nPLAYED : " + str(self.played) + f"            STRIKES: {self.strikes}            HINTS: {self.num_hints}"
-        output += f"            CARDS LEFT: {len(self.deck)}\n"
+        raw_cards_strs = [f"P{player}: [{' '.join([str(card) for card in cards])}]" for player, cards in self.player_cards.items()]
+        raw_hints_strs = []
+        for player, cards in self.player_cards.items():
+            raw_hints_str = f"     "
+            for card in cards:
+                number_hints = [hint for hint in card.hints if hint.hint_type == HintType.NUMBER]
+                color_hints = [hint for hint in card.hints if hint.hint_type == HintType.COLOR]
+                raw_hints_str += str(number_hints[0].hint_value) if len(number_hints) else " "
+                raw_hints_str += INT_TO_COLOR_REPR[color_hints[0].hint_value] if len(color_hints) else " "
+                raw_hints_str += " "
+            raw_hints_strs.append(raw_hints_str)
+            #raw_hints_str = f"P{player}: [{' '.join([card.hints for card in cards])}]"
+        output = "HINTS  : " + "  |  ".join(raw_hints_strs)
+        output += "\nHANDS  : " + "  |  ".join(raw_cards_strs)
+        output += "\nPLAYED : " + str(self.played) + f"        STRIKES: {self.strikes}        HINTS: {self.num_hints}"
+        output += f"        CARDS LEFT: {len(self.deck)}\n"
         print(output)
 
     def shuffle_cards(self) -> List[Card]:

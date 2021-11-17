@@ -10,5 +10,8 @@ class Card:
     number: int
     hints: List[Hint]
 
+    def __str__(self) -> str:
+        return f"{self.number}{INT_TO_COLOR_REPR[self.color]}"
+
     def __repr__(self) -> str:
         return f"{self.number}{INT_TO_COLOR_REPR[self.color]}" + (" " + str(self.hints) if len(self.hints) else "")

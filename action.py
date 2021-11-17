@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Union, List
 
-INT_TO_COLOR_REPR = {0: '♢', 1: '♧', 2: '♡', 3: '♠', 4: 'Δ', 5: 'Ͼ', None: "NoColor"}
+INT_TO_COLOR_REPR = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', None: "."}
 
 class HintType(Enum):
     COLOR = 0
@@ -28,8 +28,8 @@ class Play:
     actor: Optional[int] = None
 
     def __repr__(self) -> str:
-        success_repr = '✓' if self.success else '✗'
-        return f"P({self.card} {success_repr})"
+        success_repr = '+' if self.success else '-'
+        return f"P({repr(self.card)} {success_repr})"
 
 @dataclass
 class Discard:
@@ -38,7 +38,7 @@ class Discard:
     actor: Optional[int] = None
 
     def __repr__(self) -> str:
-        return f"D({self.card})"
+        return f"X({repr(self.card)})"
 
 Action = Union[Hint, Discard, Play]
 
