@@ -135,16 +135,21 @@ class HanabiGame:
                     remaining_cards = self.draw_new_card(i, idx)
                 elif isinstance(new_action, Hint):
                     if self.num_hints <= 0:
-                        raise IndentationError("you don't have any valid hints, foo")
+                        raise IndentationError("you don't have any hints left, foo")
                     new_action.matches_cards = []
                     # Default to number, override with color if needed
                     matches = lambda card: new_action.hint_value == card.number
                     if new_action.hint_type == HintType.COLOR:
                         matches = lambda card: new_action.hint_value == card.color
+
+                    has_match = False
                     for idx, card in enumerate(self.player_cards[new_action.player]):
                         if matches(card):
+                            has_match = True
                             card.hints.append(new_action)
                             new_action.matches_cards.append(idx)
+                    if not has_match:
+                        raise ZeroDivisionError(f"dude stop cheating. you can't hint {new_action}, player {new_action.player} with {self.player_cards[new_action.player]} doesn't have any")
 
                     self.num_hints -= 1
                 elif isinstance(new_action, Discard):
@@ -184,7 +189,9 @@ class HanabiGame:
         return sum([card.number for card in self.played])
 
 if __name__ == '__main__':
+    random.seed(0)
     num_players = 4
+    from smart_player import SmartPlayer
     from average_player import AveragePlayer
     game = HanabiGame(players=[AveragePlayer(i, 4, NUM_COLORS) for i in range(num_players)], verbose=True)
 
