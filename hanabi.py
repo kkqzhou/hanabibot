@@ -185,8 +185,8 @@ class HanabiGame:
 
 if __name__ == '__main__':
     num_players = 4
-    from smart_player import SmartPlayer
-    game = HanabiGame(players=[SmartPlayer(i, 4, NUM_COLORS) for i in range(num_players)], verbose=True)
+    from average_player import AveragePlayer
+    game = HanabiGame(players=[AveragePlayer(i, 4, NUM_COLORS) for i in range(num_players)], verbose=True)
 
     print('Final Score:', game.play_complete())
     print(tabulate.tabulate(

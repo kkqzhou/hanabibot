@@ -4,6 +4,7 @@ import random
 from typing import List
 from hanabi import HanabiGame
 from dumb_player import SmartDumbPlayer
+from average_player import AveragePlayer
 from smart_player import SmartPlayer
 
 def print_stats(scores: List[int], strikes: int, wins: int):
@@ -16,6 +17,8 @@ def score_algo(algo, tries=10000):
     count_wins = 0
     strikes = 0
     for i in range(tries):
+        if i % 1000 == 999:
+            print(f'Run {i+1}/{tries}')
         players = [algo(i, 4, 6) for i in range(4)]
         verbose = False
         if verbose:
@@ -37,4 +40,4 @@ def score_algo(algo, tries=10000):
 
 if __name__ == '__main__':
     random.seed(0)
-    score_algo(SmartPlayer, tries=10000)
+    score_algo(AveragePlayer, tries=10000)
