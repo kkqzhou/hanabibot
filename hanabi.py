@@ -113,6 +113,7 @@ class HanabiGame:
         count_down_out_of_cards = 0
 
         while not done:
+            self.num_hints = min(self.num_hints, 8)
             for i, player in enumerate(self.players):
                 visible_hands = {
                     j: player_cards for j, player_cards in self.player_cards.items() if i != j
