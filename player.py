@@ -16,7 +16,7 @@ class Player(ABC):
     ) -> Action:
         pass
 
-    def event_tracker(self, event: Action):
+    def event_tracker(self, event: Action, **kwargs):
         pass
 
 class SimplePlayer(Player):

@@ -163,7 +163,7 @@ class HanabiGame:
                     print('Player', i, 'does', new_action)
 
                 for player in self.players:
-                    player.event_tracker(new_action)
+                    player.event_tracker(new_action, num_hints=self.num_hints, strikes=self.strikes, played=self.played)
 
                 if not remaining_cards and not counting_down_out_of_cards:
                     counting_down_out_of_cards = True
@@ -193,7 +193,7 @@ if __name__ == '__main__':
     num_players = 4
     from smart_player import SmartPlayer
     from average_player import AveragePlayer
-    game = HanabiGame(players=[AveragePlayer(i, 4, NUM_COLORS) for i in range(num_players)], verbose=True)
+    game = HanabiGame(players=[SmartPlayer(i, 4, NUM_COLORS) for i in range(num_players)], verbose=True)
 
     print('Final Score:', game.play_complete())
     print(tabulate.tabulate(

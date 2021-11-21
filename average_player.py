@@ -296,7 +296,7 @@ class AveragePlayer(Player):
 
         return self.discard_rule(my_hints, self.played)
 
-    def event_tracker(self, event: Action):
+    def event_tracker(self, event: Action, **kwargs):
         if isinstance(event, Hint):
             self.num_hints -= 1
             any_playable = False
